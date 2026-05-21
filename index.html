@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Generation Tool</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 100%;
+      max-width: 430px;
+      margin: 20px auto;
+      padding: 16px;
+      background: #111;
+      color: #eee;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background: #1e1e1e;
+      color: white;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 200px;
+      resize: vertical;
+      margin-bottom: 20px;
+    }
+
+    select {
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #4f46e5;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #6366f1;
+    }
+
+    .url-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .url-row input {
+      flex: 1;
+    }
+
+    .preview {
+      width: 65px;
+      height: 65px;
+      border-radius: 10px;
+      background: #222;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .placeholder {
+      font-size: 11px;
+      color: #777;
+      text-align: center;
+      padding: 5px;
+    }
+
+    .job-box {
+      margin-top: 20px;
+      padding: 14px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+
+    .generated-images {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .image-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .image-card img {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #333;
+      margin-top: 8px;
+    }
+
+    .download-btn {
+      margin-top: 10px;
+      background: #16a34a;
+    }
+
+    .download-btn:hover {
+      background: #22c55e;
+    }
+
+    pre {
+      background: #1e1e1e;
+      padding: 14px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Image Generation Tool</h1>
+
+<label>API Key</label>
+<input
+  type="password"
+  id="loginPassword"
+  autocomplete="current-password"
+  placeholder="Enter API Key"
+/>
+
+<label>Model</label>
+<select id="model">
+  <option value="gpt-image-2">gpt-image-2</option>
+  <option value="nano-banana-2">nano-banana-2</option>
+  <option value="flux">flux</option>
+</select>
+
+<label>Prompt</label>
+<textarea id="prompt"></textarea>
+
+<label>Image URLs (max 5)</label>
+
+<div id="urlList">
+
+  <div class="url-row">
+    <input placeholder="https://example.com/image1.jpg"/>
+    <div class="preview"><div class="placeholder">Preview</div></div>
+  </div>
+
+  <div class="url-row">
+    <input placeholder="https://example.com/image2.jpg"/>
+    <div class="preview"><div class="placeholder">Preview</div></div>
+  </div>
+
+  <div class="url-row">
+    <input placeholder="https://example.com/image3.jpg"/>
+    <div class="preview"><div class="placeholder">Preview</div></div>
+  </div>
+
+  <div class="url-row">
+    <input placeholder="https://example.com/image4.jpg"/>
+    <div class="preview"><div class="placeholder">Preview</div></div>
+  </div>
+
+  <div class="url-row">
+    <input placeholder="https://example.com/image5.jpg"/>
+    <div class="preview"><div class="placeholder">Preview</div></div>
+  </div>
+
+</div>
+
+<button id="generateBtn">Generate</button>
+
+<div class="job-box">
+  <strong>Job ID:</strong> <span id="jobId">None</span><br><br>
+  <strong>Status:</strong> <span id="jobStatus">Idle</span>
+</div>
+
+<div class="generated-images" id="generatedImages"></div>
+
+<pre id="output"></pre>
+
+<script>
+
+let pollInterval = null;
+
+/* -------------------------
+   live previews
+--------------------------*/
+document.querySelectorAll(".url-row").forEach(row => {
+  const input = row.querySelector("input");
+  const preview = row.querySelector(".preview");
+
+  input.addEventListener("input", () => {
+    const url = input.value.trim();
+
+    if (!url) {
+      preview.innerHTML = '<div class="placeholder">Preview</div>';
+      return;
+    }
+
+    const img = document.createElement("img");
+    img.src = url;
+
+    img.onerror = () => {
+      preview.innerHTML = '<div class="placeholder">Invalid</div>';
+    };
+
+    preview.innerHTML = "";
+    preview.appendChild(img);
+  });
+});
+
+/* -------------------------
+   credential helper (safe no-op)
+--------------------------*/
+async function saveApiKeyCredential() {
+  try {
+    if (!window.PasswordCredential || !navigator.credentials) return;
+
+    const password =
+      document.getElementById("loginPassword").value.trim();
+
+    if (!password) return;
+
+    const cred = new PasswordCredential({
+      id: "api-key",
+      password,
+      name: "API Key"
+    });
+
+    await navigator.credentials.store(cred);
+  } catch (e) {
+    console.log("Credential save skipped");
+  }
+}
+
+/* -------------------------
+   generate
+--------------------------*/
+async function generateImage() {
+
+  const prompt = document.getElementById("prompt").value.trim();
+  const apiKey = document.getElementById("loginPassword").value.trim();
+  const model = document.getElementById("model").value;
+
+  if (!prompt || !apiKey) return alert("Missing fields");
+
+  await saveApiKeyCredential();
+
+  const images = [];
+
+  document.querySelectorAll("#urlList input").forEach(i => {
+    const v = i.value.trim();
+    if (v) images.push({ image_url: v });
+  });
+
+  const payload = {
+    model,
+    prompt,
+    size: "1024x1024",
+    sync: false,
+    images
+  };
+
+  const res = await fetch("https://api.navy/v1/images/generations", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
+
+  const jobId = data.id;
+  document.getElementById("jobId").textContent = jobId;
+
+  startPolling(jobId, apiKey);
+}
+
+/* -------------------------
+   polling
+--------------------------*/
+function startPolling(jobId, apiKey) {
+  if (pollInterval) clearInterval(pollInterval);
+
+  checkJob(jobId, apiKey);
+
+  pollInterval = setInterval(() => {
+    checkJob(jobId, apiKey);
+  }, 5000);
+}
+
+/* -------------------------
+   job check (BASE64 + URL support)
+--------------------------*/
+async function checkJob(jobId, apiKey) {
+
+  const res = await fetch(
+    `https://api.navy/v1/images/generations/${jobId}`,
+    {
+      headers: {
+        "Authorization": `Bearer ${apiKey}`
+      }
+    }
+  );
+
+  const data = await res.json();
+
+  document.getElementById("jobStatus").textContent =
+    data.status;
+
+  if (data.status !== "completed") return;
+
+  clearInterval(pollInterval);
+
+  const container = document.getElementById("generatedImages");
+  container.innerHTML = "";
+
+  const items = data?.result?.data || [];
+
+  items.forEach((item, i) => {
+
+    const card = document.createElement("div");
+    card.className = "image-card";
+
+    const title = document.createElement("div");
+    title.textContent = `Image ${i + 1}`;
+    title.style.fontWeight = "bold";
+
+    card.appendChild(title);
+
+    let src = null;
+
+    // BASE64
+    if (item.b64_json) {
+      src = `data:image/png;base64,${item.b64_json}`;
+    }
+
+    // URL
+    else if (item.url) {
+      src = item.url;
+    }
+
+    if (src) {
+
+      const img = document.createElement("img");
+      img.src = src;
+
+      const btn = document.createElement("button");
+      btn.className = "download-btn";
+      btn.textContent = "Download";
+
+      btn.onclick = () => {
+        const a = document.createElement("a");
+        a.href = src;
+        a.download = "image.png";
+        a.click();
+      };
+
+      card.appendChild(img);
+      card.appendChild(btn);
+    }
+
+    container.appendChild(card);
+  });
+}
+
+/* -------------------------
+   bind
+--------------------------*/
+document
+  .getElementById("generateBtn")
+  .addEventListener("click", generateImage);
+
+</script>
+
+</body>
+</html>
