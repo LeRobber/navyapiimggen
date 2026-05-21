@@ -295,15 +295,17 @@ async function generateImage() {
 
   document.querySelectorAll("#urlList input").forEach(i => {
     const v = i.value.trim();
-    if (v) images.push({ image_url: v });
+    if (v) images.push(v);
   });
+
+
 
   const payload = {
     model,
     prompt,
     size: "1024x1024",
     sync: false,
-    images
+    image_url: images
   };
 
   const res = await fetch("https://api.navy/v1/images/generations", {
