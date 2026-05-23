@@ -189,6 +189,70 @@
   <option value="flux">flux</option>
 </select>
 
+<label for="image-ratios">Select Image Size:</label>
+<select name="image-ratios" id="image-ratios">
+
+
+  
+    <!-- Traditional, Square & Mobile -->
+    <optgroup label="Traditional, Square & Mobile">
+        <option value="2048x1536">4:3 - iPad / Digital Camera (2048x1536)</option>
+        <option value="1440x1080">4:3 - Digital Camera (1440x1080)</option>
+        <option value="1024x768">4:3 - Older TV / XGA (1024x768)</option>
+        <option value="1080x1350">4:5 - Instagram Portrait Post (1080x1350)</option>
+        <option value="2048x2048">1:1 - Square / Profile Pic (2048x2048)</option>
+        <option value="1024x1024">1:1 - Square / Profile Pic (1024x1024)</option>
+        <option value="1080x1920">9:16 - TikTok / Reels / Shorts (1080x1920)</option>
+        <option value="720x1280">9:16 - TikTok / Reels / Shorts (720x1280)</option>
+    </optgroup>
+
+       <!-- Widescreen & Digital Standards -->
+    <optgroup label="Widescreen & Digital Standards">
+        <option value="3840x2160">16:9 - 4K UHD (3840x2160)</option>
+        <option value="2560x1440">16:9 - 1440p QHD (2560x1440)</option>
+        <option value="1920x1080">16:9 - 1080p FHD (1920x1080)</option>
+        <option value="1280x720">16:9 - 720p HD (1280x720)</option>
+        <option value="2560x1600">16:10 - Productivity Laptop (2560x1600)</option>
+        <option value="1920x1200">16:10 - Productivity Laptop (1920x1200)</option>
+        <option value="3000x2000">3:2 - DSLR / 35mm Photo (3000x2000)</option>
+        <option value="1500x1000">3:2 - DSLR / 35mm Photo (1500x1000)</option>
+        <option value="1080x720">3:2 - DSLR / 35mm Photo (1080x720)</option>
+    </optgroup>
+
+    <!-- Ultra-Wide & Panoramic -->
+    <optgroup label="Ultra-Wide & Panoramic (3:1 to 2:1)">
+        <option value="3072x1024">3:1 - Cinematic Banner (3072x1024)</option>
+        <option value="2048x683">3:1 - Cinematic Crop (2048x683)</option>
+        <option value="2390x1000">2.39:1 - Anamorphic Cinema Standard (2390x1000)</option>
+        <option value="2560x1071">2.39:1 - Anamorphic Cinema Standard (2560x1071)</option>
+        <option value="3440x1440">21:9 - Ultrawide QHD (3440x1440)</option>
+        <option value="2560x1080">21:9 - Ultrawide FHD (2560x1080)</option>
+        <option value="2000x1000">2:1 - Social Media Carousel / Wide Banner (2000x1000)</option>
+        <option value="4000x2000">2:1 - Social Media Carousel / Wide Banner (4000x2000)</option>
+        <option value="1920x1037">1.85:1 - US Cinema Widescreen (1920x1037)</option>
+        <option value="1850x1000">1.85:1 - US Cinema Widescreen (1850x1000)</option>
+    </optgroup>
+
+    <!-- Expanded Portrait & Landscape -->
+    <optgroup label="Expanded Portrait & Landscape">
+        <option value="960x2160">4:9 - Ultra-Tall Portrait (960x2160)</option>
+        <option value="720x1280">4:7 - Tall Portrait (720x1280)</option>
+        <option value="1440x720">7:4 - Wide Landscape (1440x720)</option>
+        <option value="2160x960">9:4 - Ultra-Wide Landscape (2160x960)</option>
+    </optgroup>
+
+        <!-- Facebook & Social Media Headers -->
+    <optgroup label="Facebook & Social Media Headers">
+        <option value="851x315">FB Cover Photo (851x315)</option>
+        <option value="1640x856">FB Group Header (1640x856)</option>
+        <option value="1920x1005">FB Event Cover (1920x1005)</option>
+    </optgroup>
+
+
+ 
+</select>
+
+
 <label>Prompt</label>
 
 <textarea
@@ -261,6 +325,21 @@
 <pre id="trace"></pre>
 
 <script>
+
+function getSelectedSize() {
+    // Target the dropdown by its ID
+    const dropdown = document.getElementById('image-ratios');
+    
+    // Grab the value (e.g., "1920x1080")
+    const selectedValue = dropdown.value;
+    
+    console.log("Selected Size:", selectedValue);
+    return selectedValue;
+}
+
+// Example usage: linking it to a button in your HTML
+// <button onclick="getSelectedSize()">Submit</button>
+
 
 let pollInterval = null;
 
@@ -441,7 +520,7 @@ async function generateImage() {
     model,
     prompt,
 
-    size: "1024x1024",
+    size: getSelectedSize(),
 
     sync: false,
 
