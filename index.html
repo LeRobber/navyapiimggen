@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <!-- saved from url=(0041)https://lerobber.github.io/navyapiimggen/ -->
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Generation Tool</title>
 
   <style>
@@ -212,13 +211,13 @@
       font-size: 12px;
     }
   </style>
-</head>
+<style type="text/css"></style></head>
 
 <body>
   <h1>Image Generation Tool</h1>
 
   <label>API Key</label>
-  <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Enter API Key" />
+  <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Enter API Key">
 
   <label>Model</label>
   <select id="model">
@@ -233,6 +232,7 @@
     <option value="flux.2-pro">flux.2-pro (premium)</option>
     <option value="imagen-4">imagen-4 (premium)</option>
     <option value="nano-banana-pro">nano-banana-pro (premium)</option>
+    <option value="veo-3.1">veo-3.1 (ultra, 200x,1 ref, rename to .mp4 after download)</option>
   </select>
 
   <label for="image-ratios">Select Image Size:</label>
@@ -293,35 +293,35 @@
   <label>Upload Reference Images (max 5)</label>
   <div id="uploadList">
     <div class="upload-row">
-      <input type="file" accept="image/*" />
+      <input type="file" accept="image/*">
       <div class="preview">
         <button class="preview-remove-btn" type="button" aria-label="Remove reference image">×</button>
         <div class="placeholder">Preview</div>
       </div>
     </div>
     <div class="upload-row">
-      <input type="file" accept="image/*" />
+      <input type="file" accept="image/*">
       <div class="preview">
         <button class="preview-remove-btn" type="button" aria-label="Remove reference image">×</button>
         <div class="placeholder">Preview</div>
       </div>
     </div>
     <div class="upload-row">
-      <input type="file" accept="image/*" />
+      <input type="file" accept="image/*">
       <div class="preview">
         <button class="preview-remove-btn" type="button" aria-label="Remove reference image">×</button>
         <div class="placeholder">Preview</div>
       </div>
     </div>
     <div class="upload-row">
-      <input type="file" accept="image/*" />
+      <input type="file" accept="image/*">
       <div class="preview">
         <button class="preview-remove-btn" type="button" aria-label="Remove reference image">×</button>
         <div class="placeholder">Preview</div>
       </div>
     </div>
     <div class="upload-row">
-      <input type="file" accept="image/*" />
+      <input type="file" accept="image/*">
       <div class="preview">
         <button class="preview-remove-btn" type="button" aria-label="Remove reference image">×</button>
         <div class="placeholder">Preview</div>
@@ -333,7 +333,7 @@
 
   <div class="job-box">
     <strong>Job ID:</strong> <span id="jobId">None</span>
-    <br /><br />
+    <br><br>
     <strong>Status:</strong> <span id="jobStatus">Idle</span>
   </div>
 
@@ -603,5 +603,6 @@
     ----------------------------*/
     document.getElementById("generateBtn").addEventListener("click", generateImage);
   </script>
-</body>
-</html>
+
+
+</body></html>
