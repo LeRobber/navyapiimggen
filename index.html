@@ -332,19 +332,19 @@
   <button id="generateBtn">Generate</button>
 
   <div class="job-box">
-    <strong>Job ID:</strong> <span id="jobId">job_398af08cd22096e38219734f2ee970d2</span>
+    <strong>Job ID:</strong> <span id="jobId">exampleID</span>
     <br><br>
-    <strong>Status:</strong> <span id="jobStatus">in_progress</span>
+    <strong>Status:</strong> <span id="jobStatus">waiting for input</span>
   </div>
 
   <div class="generated-images" id="generatedImages"></div>
 
   <pre id="output">{
-  "id": "job_398af08cd22096e38219734f2ee970d2",
+  "id": "exampleID",
   "object": "job",
   "created_at": 1781556352,
-  "status": "in_progress",
-  "model": "veo-3.1"
+  "status": "waiting for input",
+  "model": "example"
 }</pre>
   <pre id="trace"></pre>
 
@@ -633,6 +633,7 @@
     ----------------------------*/
     document.getElementById("generateBtn").addEventListener("click", generateImage);
   </script>
+
 
 
 
